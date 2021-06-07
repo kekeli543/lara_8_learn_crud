@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -13,7 +14,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::get(); //取得表格的所有資料
+        return view('posts.index', compact('posts'));
     }
 
     /**
@@ -23,7 +25,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -34,7 +36,14 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //建立 posts 表格內的一筆新資料
+        $post = Post::create($request->only(['title', 'content', 'status']));
+
+        if ($post) {
+            return redirect()->route('posts.show', $post->id);
+        } else {
+            return back();
+        }
     }
 
     /**
@@ -45,7 +54,8 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        $post = Post::findOrFail($id); //取得主鍵為 $id 的資料
+        return view('posts.show', compact('post'));
     }
 
     /**
@@ -56,7 +66,8 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -68,7 +79,10 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $post = Post::findOrFail($id);
+        //更新指定資料
+        $post->update($request->only(['title', 'content', 'status']));
+        return redirect()->route('posts.show', $id);
     }
 
     /**
@@ -79,6 +93,9 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        //刪除指定資料
+        $post->delete();
+        return redirect()->route('posts.index');
     }
 }

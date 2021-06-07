@@ -14,8 +14,11 @@ class CreatePostsTable extends Migration
     public function up()
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id(); //主鍵
+            $table->string('title',50);
+            $table->text('content');
+            $table->string('status',10)->default('draft');
+            $table->timestamps(); //兩個時間戳記 created_at . updated_at
         });
     }
 
